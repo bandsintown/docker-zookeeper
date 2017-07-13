@@ -1,5 +1,5 @@
-FROM openjdk:8-jre-alpine
-MAINTAINER Elisey Zanko <elisey.zanko@gmail.com>
+FROM bandsintown/openjdk:8-jre
+MAINTAINER Bandsintown DevOps Team <devops@bandsintown.com>
 
 # Install required packages
 RUN apk add --no-cache \
@@ -36,7 +36,8 @@ RUN set -x \
     && tar -xzf "$DISTRO_NAME.tar.gz" \
     && mv "$DISTRO_NAME/conf/"* "$ZOO_CONF_DIR" \
     && rm -r "$GNUPGHOME" "$DISTRO_NAME.tar.gz" "$DISTRO_NAME.tar.gz.asc" \
-    && apk del .build-deps
+    && apk del .build-deps \
+    && echo -ne "- with $DISTRO_NAME\n" >> /root/.built
 
 WORKDIR $DISTRO_NAME
 VOLUME ["$ZOO_DATA_DIR", "$ZOO_DATA_LOG_DIR"]

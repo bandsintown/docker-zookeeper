@@ -1,9 +1,9 @@
 # Supported tags and respective `Dockerfile` links
 
-* `3.3.6`, `3.3` [(3.3.6/Dockerfile)](https://github.com/31z4/zookeeper-docker/blob/master/3.3.6/Dockerfile)
-* `3.4.10`, `3.4`, `latest` [(3.4.10/Dockerfile)](https://github.com/31z4/zookeeper-docker/blob/master/3.4.10/Dockerfile)
+* `3.3.6`, `3.3` [(3.3.6/Dockerfile)](https://github.com/bandsintown/zookeeper-docker/blob/master/3.3.6/Dockerfile)
+* `3.4.10`, `3.4`, `latest` [(3.4.10/Dockerfile)](https://github.com/bandsintown/zookeeper-docker/blob/master/3.4.10/Dockerfile)
 
-[![](https://images.microbadger.com/badges/image/31z4/zookeeper.svg)](http://microbadger.com/images/31z4/zookeeper)
+[![](https://images.microbadger.com/badges/image/bandsintown/zookeeper.svg)](http://microbadger.com/images/bandsintown/zookeeper)
 
 # What is Apache Zookeeper?
 
@@ -15,7 +15,7 @@ Apache ZooKeeper is a software project of the Apache Software Foundation, provid
 
 ## Start a Zookeeper server instance
 
-	$ docker run --name some-zookeeper --restart always -d 31z4/zookeeper
+	$ docker run --name some-zookeeper --restart always -d bandsintown/zookeeper
 
 This image includes `EXPOSE 2181 2888 3888` (the zookeeper client port, follower port, election port respectively), so standard container linking will make it automatically available to the linked containers. Since the Zookeeper "fails fast" it's better to always restart it.
 
@@ -25,7 +25,7 @@ This image includes `EXPOSE 2181 2888 3888` (the zookeeper client port, follower
 
 ## Connect to Zookeeper from the Zookeeper command line client
 
-	$ docker run -it --rm --link some-zookeeper:zookeeper 31z4/zookeeper zkCli.sh -server zookeeper
+	$ docker run -it --rm --link some-zookeeper:zookeeper bandsintown/zookeeper zkCli.sh -server zookeeper
 
 ## ... via [`docker-compose`](https://github.com/docker/compose)
 
@@ -35,7 +35,7 @@ Example `docker-compose.yml` for `zookeeper`:
 version: '2'
 services:
     zoo1:
-        image: 31z4/zookeeper
+        image: bandsintown/zookeeper
         restart: always
         ports:
             - 2181:2181
@@ -44,7 +44,7 @@ services:
             ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
 
     zoo2:
-        image: 31z4/zookeeper
+        image: bandsintown/zookeeper
         restart: always
         ports:
             - 2182:2181
@@ -53,7 +53,7 @@ services:
             ZOO_SERVERS: server.1=zoo1:2888:3888 server.2=zoo2:2888:3888 server.3=zoo3:2888:3888
 
     zoo3:
-        image: 31z4/zookeeper
+        image: bandsintown/zookeeper
         restart: always
         ports:
             - 2183:2181
@@ -72,13 +72,13 @@ Consider using [Docker Swarm](https://www.docker.com/products/docker-swarm) when
 
 Zookeeper configuration is located in `/conf`. One way to change it is mounting your config file as a volume:
 
-	$ docker run --name some-zookeeper --restart always -d -v $(pwd)/zoo.cfg:/conf/zoo.cfg 31z4/zookeeper
+	$ docker run --name some-zookeeper --restart always -d -v $(pwd)/zoo.cfg:/conf/zoo.cfg bandsintown/zookeeper
 
 ## Environment variables
 
 ZooKeeper recommended defaults are used if `zoo.cfg` file is not provided. They can be overridden using the following environment variables.
 
-    $ docker run -e "ZOO_INIT_LIMIT=10" --name some-zookeeper --restart always -d 31z4/zookeeper
+    $ docker run -e "ZOO_INIT_LIMIT=10" --name some-zookeeper --restart always -d bandsintown/zookeeper
 
 ### `ZOO_TICK_TIME`
 
