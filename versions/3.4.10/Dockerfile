@@ -6,7 +6,9 @@ RUN apk add --no-cache \
     bash \
     su-exec
 
-ENV ZOO_USER=zookeeper \
+ENV SERVICE_NAME=zookeeper \
+    SERVICE_VERSION="3.4.10" \
+    ZOO_USER=zookeeper \
     ZOO_CONF_DIR=/conf \
     ZOO_DATA_DIR=/data \
     ZOO_DATA_LOG_DIR=/datalog \
@@ -22,7 +24,7 @@ RUN set -x \
     && chown "$ZOO_USER:$ZOO_USER" "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR"
 
 ARG GPG_KEY=C823E3E5B12AF29C67F81976F5CECB3CB5E9BD2D
-ARG DISTRO_NAME=zookeeper-3.4.10
+ARG DISTRO_NAME=$SERVICE_NAME-$SERVICE_VERSION
 
 # Download Apache Zookeeper, verify its PGP signature, untar and clean up
 RUN set -x \
@@ -37,7 +39,7 @@ RUN set -x \
     && mv "$DISTRO_NAME/conf/"* "$ZOO_CONF_DIR" \
     && rm -r "$GNUPGHOME" "$DISTRO_NAME.tar.gz" "$DISTRO_NAME.tar.gz.asc" \
     && apk del .build-deps \
-    && echo -ne "- with $DISTRO_NAME\n" >> /root/.built
+    && echo -ne "- with $SERVICE_NAME $SERVICE_VERSION\n" >> /root/.built
 
 WORKDIR $DISTRO_NAME
 VOLUME ["$ZOO_DATA_DIR", "$ZOO_DATA_LOG_DIR"]

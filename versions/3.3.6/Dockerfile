@@ -1,12 +1,15 @@
 FROM bandsintown/openjdk:8-jre
 MAINTAINER Bandsintown DevOps Team <devops@bandsintown.com>
 
+
 # Install required packages
 RUN apk add --no-cache \
     bash \
     su-exec
 
-ENV ZOO_USER=zookeeper \
+ENV SERVICE_NAME=zookeeper \
+    SERVICE_VERSION="3.3.6" \
+    ZOO_USER=zookeeper \
     ZOO_CONF_DIR=/conf \
     ZOO_DATA_DIR=/data \
     ZOO_DATA_LOG_DIR=/datalog \
@@ -22,7 +25,7 @@ RUN set -x \
     && chown "$ZOO_USER:$ZOO_USER" "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR"
 
 ARG GPG_KEY=D0BC8D8A4E90A40AFDFC43B3E22A746A68E327C1
-ARG DISTRO_NAME=zookeeper-3.3.6
+ARG DISTRO_NAME=$SERVICE_NAME-$SERVICE_VERSION
 
 # Download Apache Zookeeper, verify its PGP signature, untar and clean up
 RUN set -x \
@@ -37,7 +40,7 @@ RUN set -x \
     && mv "$DISTRO_NAME/conf/"* "$ZOO_CONF_DIR" \
     && rm -r "$GNUPGHOME" "$DISTRO_NAME.tar.gz" "$DISTRO_NAME.tar.gz.asc" \
     && apk del .build-deps \
-    && echo -ne "- with $DISTRO_NAME\n" >> /root/.built
+    && echo -ne "- with $SERVICE_NAME $SERVICE_VERSION\n" >> /root/.built
 
 
 WORKDIR $DISTRO_NAME
