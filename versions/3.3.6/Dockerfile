@@ -40,7 +40,7 @@ RUN set -x \
     && mv "$DISTRO_NAME/conf/"* "$ZOO_CONF_DIR" \
     && rm -r "$GNUPGHOME" "$DISTRO_NAME.tar.gz" "$DISTRO_NAME.tar.gz.asc" \
     && apk del .build-deps \
-    && echo -ne "- with $SERVICE_NAME $SERVICE_VERSION\n" >> /root/.built
+    && echo -ne "- with Zookeeper: $SERVICE_VERSION\n" >> /root/.built
 
 
 WORKDIR $DISTRO_NAME
@@ -51,6 +51,6 @@ EXPOSE $ZOO_PORT 2888 3888
 ENV PATH=$PATH:/$DISTRO_NAME/bin \
     ZOOCFGDIR=$ZOO_CONF_DIR
 
-COPY docker-entrypoint.sh /
-ENTRYPOINT ["/docker-entrypoint.sh"]
+COPY rootfs /
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["zkServer.sh", "start-foreground"]
