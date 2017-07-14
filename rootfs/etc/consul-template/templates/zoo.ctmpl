@@ -1,9 +1,11 @@
 {{ $service_name := or (env "SERVICE_NAME") "zookeeper" }}{{ $base_path := (printf "service/%s" $service_name) }}
 
-# Zookeeper Servers
-{{range $i, $services := service $service_name}}
-server.{{ $i | add 1 }}={{.Address}}:2888:38888
-{{ end }}
+# Zookeeper ensemble
+standaloneEnabled=false
+{{ range $services := service $service_name }}
+{{ $zoo_id := keyOrDefault (printf "%s/servers/%s/id" $base_path .Address) "0" }}{{ if ne $zoo_id "0" }}
+server.{{ $zoo_id }}={{ .Address }}:2888:3888
+{{ end }}{{ end }}
 
 # Minimum Configuration
 # see: http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_minimumConfiguration
@@ -16,5 +18,7 @@ syncLimit={{ keyOrDefault (printf "%s/syncLimit" $base_path) (env "ZOO_SYNC_LIMI
 
 # Advanced Configuration
 # see: http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_advancedConfiguration
-{{ range (printf "%s" $base_path) | ls }}{{.Key}}={{ .Value }}
-{{ end }}
+{{ range (printf "%s" $base_path) | ls }}
+{{ if and (ne .Key "clientPort") (ne .Key "dataDir") (ne .Key "dataLogDir") (ne .Key "tickTime") (ne .Key "initLimit") (ne .Key "syncLimit") }}
+{{.Key}}={{ .Value }}
+{{ end }}{{ end }}
