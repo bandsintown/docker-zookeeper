@@ -1,0 +1,61 @@
+version: '2'
+
+services:
+
+  # Consul
+  consul:
+    image: consul:0.7.5
+    command: "agent -dev -client 0.0.0.0 -ui"
+    container_name: consul
+    ports:
+      - 8301
+      - 8500
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - SERVICE_IGNORE=true
+
+  # Registrator
+  registrator:
+    image: nhuray/registrator:v7
+    command: "-internal consul://consul:8500"
+    container_name: registrator
+    depends_on:
+      - consul
+    volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+
+  # Consulator
+  consulator:
+    image: lewispeckover/consulator
+    command: "sync -prefix=service /app/consulator.yml"
+    depends_on:
+      - consul
+    volumes:
+      - ./consulator.yml:/app/consulator.yml
+    environment:
+      - CONSUL_HTTP_ADDR=consul:8500
+
+  # Log Agent
+  zookeeper:
+    image: bandsintown/zookeeper:3.4.10
+    depends_on:
+      - consul
+      - consulator
+    command: consul-template -consul-addr consul:8500 -config /etc/consul-template/conf
+    environment:
+      - CONSUL_ADDRESS=consul:8500
+      - DISABLE_CONSUL_TEMPLATE=true
+      - S6_LOGGING=0
+      - SERVICE_2181_NAME=zookeeper
+      - SERVICE_2181_CHECK_TCP=true
+      - SERVICE_2181_CHECK_INTERVAL=15s
+      - SERVICE_2888_NAME=zookeeper-2888
+      - SERVICE_2888_CHECK_TCP=true
+      - SERVICE_2888_CHECK_INTERVAL=15s
+      - SERVICE_3888_NAME=zookeeper-3888
+      - SERVICE_3888_CHECK_TCP=true
+      - SERVICE_3888_CHECK_INTERVAL=15s
+    ports:
+      - 2181
+      - 2888
+      - 3888
