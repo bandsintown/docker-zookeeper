@@ -10,7 +10,6 @@ services:
     command: bats /tests/image
     environment:
       - VERSION=${VERSION}
-      - CONSUL_ADDRESS=test-consul:8500
 
   # Tests for consul template
   test-consul-template:

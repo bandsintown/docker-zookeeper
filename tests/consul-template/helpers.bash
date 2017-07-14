@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
+function setup(){
+  teardown
+}
+
 function teardown() {
   # Deregister service
   deregister_service $service
-  delete_keys service
+  delete_keys
   rm -f /conf/zoo.cfg
 }
 
