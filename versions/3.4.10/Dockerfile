@@ -1,5 +1,7 @@
 FROM bandsintown/openjdk:8-jre
-MAINTAINER Bandsintown DevOps Team <devops@bandsintown.com>
+MAINTAINER Bandsintown Devops Team <devops@bandsintown.com>
+
+COPY rootfs /
 
 # Install required packages
 RUN apk add --no-cache \
@@ -49,6 +51,5 @@ EXPOSE $ZOO_PORT 2888 3888
 ENV PATH=$PATH:/$DISTRO_NAME/bin \
     ZOOCFGDIR=$ZOO_CONF_DIR
 
-COPY rootfs /
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["zkServer.sh", "start-foreground"]
+ENTRYPOINT ["/init"]
+CMD ["exec" "su-exec", "zookeeper", "zkServer.sh", "start-foreground"]
