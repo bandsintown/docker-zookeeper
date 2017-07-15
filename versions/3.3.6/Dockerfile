@@ -52,4 +52,4 @@ ENV PATH=$PATH:/$DISTRO_NAME/bin \
     ZOOCFGDIR=$ZOO_CONF_DIR
 
 ENTRYPOINT ["/init"]
-CMD ["exec" "su-exec", "zookeeper", "zkServer.sh", "start-foreground"]
+CMD ["su-exec", "zookeeper", "zkServer.sh", "start-foreground"]
