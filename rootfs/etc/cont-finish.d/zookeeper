@@ -1,7 +1,4 @@
 #!/usr/bin/with-contenv bash
 
-# FIXME remove as soon we are defining CONSUL_HTTP_ADDR in bandsintown/alpine images
-export CONSUL_HTTP_ADDR=$CONSUL_ADDRESS
-
 # Deregister Zookeeper to Consul
 test -f "$ZOO_DATA_DIR/myid" && consul kv delete service/${SERVICE_NAME}/servers/$(cat "$ZOO_DATA_DIR/myid")

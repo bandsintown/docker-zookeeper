@@ -1,8 +1,5 @@
 #!/usr/bin/with-contenv bash
 
-# FIXME remove as soon we are defining CONSUL_HTTP_ADDR in bandsintown/alpine images
-export CONSUL_HTTP_ADDR=$CONSUL_ADDRESS
-
 # Defines the EC2 instance ip on aws
 EC2_IP="$(curl -s --connect-timeout 5 http://169.254.169.254/latest/meta-data/local-ipv4)"
 if [ -n "${EC2_IP}" ]; then
@@ -21,10 +18,8 @@ register_zookeeper(){
   if [ -f "$ZOO_DATA_DIR/myid" ] && [ -n "$CONSUL_HTTP_ADDR" ]; then
     zoo_id=$(cat $ZOO_DATA_DIR/myid)
     test -z ${zoo_id} && zoo_id=${ZOO_MY_ID:-1}
-    echo "${zoo_id}" > "$ZOO_DATA_DIR/myid"
-    echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
-    consul kv put ${kv}${zoo_id} ${ZOO_IP}
-    echo "ZooKeeper server '${ZOO_IP}' registered in Consul with ZooKeeper ID '${zoo_id}'"
+    echo "${zoo_id}" > "$ZOO_DATA_DIR/myid" && echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
+    consul kv put ${kv}${zoo_id} ${ZOO_IP}  && echo "ZooKeeper server '${ZOO_IP}' registered in Consul with ZooKeeper ID '${zoo_id}'" || echo "Failed to register ZooKeeper server '${ZOO_IP}' in Consul'"
     return 0
   fi
 
@@ -41,10 +36,8 @@ register_zookeeper(){
     for value in {1..255}; do
       if [[ ! " ${keys[@]} " =~ " ${value} " ]]; then
         zoo_id=${value}
-        echo "${value}" > "$ZOO_DATA_DIR/myid"
-        echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
-        consul kv put ${kv}${zoo_id} ${ZOO_IP}
-        echo "ZooKeeper server '${ZOO_IP}' registered in Consul with ZooKeeper ID '${zoo_id}'"
+        echo "${value}" > "$ZOO_DATA_DIR/myid" && echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
+        consul kv put ${kv}${zoo_id} ${ZOO_IP} && echo "ZooKeeper server '${ZOO_IP}' registered in Consul with ZooKeeper ID '${zoo_id}'" || echo "Failed to register ZooKeeper server '${ZOO_IP}' in Consul'"
         return 0
       fi
     done
@@ -53,13 +46,11 @@ register_zookeeper(){
 
   if [ ! -f "$ZOO_DATA_DIR/myid" ]; then
     zoo_id=${ZOO_MY_ID:-1};
-    echo "${zoo_id}" > "$ZOO_DATA_DIR/myid"
-    echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
+    echo "${zoo_id}" > "$ZOO_DATA_DIR/myid" && echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
   else
     zoo_id=$(cat $ZOO_DATA_DIR/myid)
     test -z ${zoo_id} && { echo "Config '$ZOO_DATA_DIR/myid' is empty"; zoo_id=${ZOO_MY_ID:-1}; }
-    echo "${zoo_id}" > "$ZOO_DATA_DIR/myid"
-    echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
+    echo "${zoo_id}" > "$ZOO_DATA_DIR/myid" && echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
   fi
 }
 
