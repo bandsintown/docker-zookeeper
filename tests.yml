@@ -20,7 +20,7 @@ services:
       - consul
     environment:
       - DISABLE_CONSUL_TEMPLATE=true
-      - CONSUL_ADDRESS=consul:8500
+      - CONSUL_HTTP_ADDR=consul:8500
       - VERSION=${VERSION}
 
   # Consul

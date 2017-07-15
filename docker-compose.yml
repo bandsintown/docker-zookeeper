@@ -43,7 +43,7 @@ services:
       - consulator
     command: consul-template -consul-addr consul:8500 -config /etc/consul-template/conf
     environment:
-      - CONSUL_ADDRESS=consul:8500
+      - CONSUL_HTTP_ADDR=consul:8500
       - DISABLE_CONSUL_TEMPLATE=true
       - S6_LOGGING=0
       - SERVICE_2181_NAME=zookeeper
