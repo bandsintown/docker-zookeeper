@@ -1,11 +1,8 @@
-{{ $service_name := or (env "SERVICE_NAME") "zookeeper" }}{{ $base_path := (printf "service/%s" $service_name) }}
-
+{{ $service_name := or (env "SERVICE_NAME") "zookeeper" }}{{ $base_path := (printf "service/%s" $service_name) }}{{ $zoo_ip := env "ZOO_IP"}}
 # Zookeeper ensemble
-standaloneEnabled=false
-{{ range $services := service $service_name }}
-{{ $zoo_id := keyOrDefault (printf "%s/servers/%s/id" $base_path .Address) "0" }}{{ if ne $zoo_id "0" }}
-server.{{ $zoo_id }}={{ .Address }}:2888:3888
-{{ end }}{{ end }}
+{{ range ls (printf "%s/servers" $base_path) }}
+{{ if eq $zoo_ip .Value }}server.{{ .Key }}=0.0.0.0:2888:3888{{else}}server.{{ .Key }}={{ .Value }}:2888:3888{{end}}
+{{ end }}
 
 # Minimum Configuration
 # see: http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_minimumConfiguration
