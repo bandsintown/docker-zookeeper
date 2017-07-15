@@ -1,8 +1,10 @@
 {{ $service_name := or (env "SERVICE_NAME") "zookeeper" }}{{ $base_path := (printf "service/%s" $service_name) }}{{ $zoo_ip := env "ZOO_IP"}}
+
+{{ $service_count := len (ls (printf "%s/servers" $base_path)) }}{{ if gt $service_count 1 }}
 # Zookeeper ensemble
 {{ range ls (printf "%s/servers" $base_path) }}
 {{ if eq $zoo_ip .Value }}server.{{ .Key }}=0.0.0.0:2888:3888{{else}}server.{{ .Key }}={{ .Value }}:2888:3888{{end}}
-{{ end }}
+{{ end }}{{ end }}
 
 # Minimum Configuration
 # see: http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_minimumConfiguration
