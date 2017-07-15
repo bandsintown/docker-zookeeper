@@ -17,32 +17,49 @@ echo -n "${ZOO_IP}" > /var/run/s6/container_environment/ZOO_IP
 # Function to register the current zookeeper in Consul
 register_zookeeper(){
 
-  if [ -f "$ZOO_DATA_DIR/myid" ] ; then
-      echo "${ZOO_MY_ID:-1}" > "$ZOO_DATA_DIR/myid"
-      if [ -n "$CONSUL_HTTP_ADDR" ]; then
-        consul kv put ${kv}$(cat "$ZOO_DATA_DIR/myid") ${ZOO_IP}
+  # Register the existing myid in Consul
+  if [ -f "$ZOO_DATA_DIR/myid" ] && [ -n "$CONSUL_HTTP_ADDR" ]; then
+    zoo_id=$(cat $ZOO_DATA_DIR/myid)
+    test -z ${zoo_id} && zoo_id=${ZOO_MY_ID:-1}
+    echo "${zoo_id}" > "$ZOO_DATA_DIR/myid"
+    echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
+    consul kv put ${kv}${zoo_id} ${ZOO_IP}
+    echo "ZooKeeper server '${ZOO_IP}' registered in Consul with ZooKeeper ID '${zoo_id}'"
+    return 0
+  fi
+
+  # Generate a new myid and registered it in Consul and in the myid file
+  if [ ! -f "$ZOO_DATA_DIR/myid" ] && [ -n "$CONSUL_HTTP_ADDR" ]; then
+    kv="service/${SERVICE_NAME}/servers/"
+
+    # get a list of all existing keys into array
+    for key in $(consul kv get -keys $kv); do
+      keys+=(${key##*/})
+    done
+
+    # Find first available key in array
+    for value in {1..255}; do
+      if [[ ! " ${keys[@]} " =~ " ${value} " ]]; then
+        zoo_id=${value}
+        echo "${value}" > "$ZOO_DATA_DIR/myid"
+        echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
+        consul kv put ${kv}${zoo_id} ${ZOO_IP}
+        echo "ZooKeeper server '${ZOO_IP}' registered in Consul with ZooKeeper ID '${zoo_id}'"
+        return 0
       fi
+    done
+    return 0
+  fi
+
+  if [ ! -f "$ZOO_DATA_DIR/myid" ]; then
+    zoo_id=${ZOO_MY_ID:-1};
+    echo "${zoo_id}" > "$ZOO_DATA_DIR/myid"
+    echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
   else
-    if [ -n "$CONSUL_HTTP_ADDR" ]; then
-      kv="service/${SERVICE_NAME}/servers/"
-
-      # get a list of all existing keys into array
-      for key in $(consul kv get -keys $kv); do
-        keys+=(${key##*/})
-      done
-
-      # Find first available key in array
-      for value in {1..255}; do
-        if [[ ! " ${keys[@]} " =~ " ${value} " ]]; then
-          consul kv put ${kv}${value} ${ZOO_IP}
-          echo "${value}" > "$ZOO_DATA_DIR/myid"
-          echo "ZooKeeper server '${ZOO_IP}' registered in Consul with ZooKeeper ID '${value}'"
-          echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${value}'"
-          return 0
-        fi
-      done
-
-    fi
+    zoo_id=$(cat $ZOO_DATA_DIR/myid)
+    test -z ${zoo_id} && { echo "Config '$ZOO_DATA_DIR/myid' is empty"; zoo_id=${ZOO_MY_ID:-1}; }
+    echo "${zoo_id}" > "$ZOO_DATA_DIR/myid"
+    echo "Config '$ZOO_DATA_DIR/myid' created with Zookeeper ID '${zoo_id}'"
   fi
 }
 
@@ -72,4 +89,4 @@ default_config
 register_zookeeper
 
 # Change directory permissions
-chown -R "$ZOO_USER" "$ZOO_DATA_DIR" "$ZOO_DATA_LOG_DIR"
+chown -R "$ZOO_USER:$ZOO_USER" "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR"
