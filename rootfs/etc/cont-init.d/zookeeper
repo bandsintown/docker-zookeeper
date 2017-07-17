@@ -13,6 +13,7 @@ echo -n "${ZOO_IP}" > /var/run/s6/container_environment/ZOO_IP
 
 # Function to register the current zookeeper in Consul
 register_zookeeper(){
+  kv="service/${SERVICE_NAME}/servers/"
 
   # Register the existing myid in Consul
   if [ -f "$ZOO_DATA_DIR/myid" ] && [ -n "$CONSUL_HTTP_ADDR" ]; then
@@ -25,7 +26,6 @@ register_zookeeper(){
 
   # Generate a new myid and registered it in Consul and in the myid file
   if [ ! -f "$ZOO_DATA_DIR/myid" ] && [ -n "$CONSUL_HTTP_ADDR" ]; then
-    kv="service/${SERVICE_NAME}/servers/"
 
     # get a list of all existing keys into array
     for key in $(consul kv get -keys $kv); do
