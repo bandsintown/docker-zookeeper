@@ -46,16 +46,7 @@ services:
       - CONSUL_HTTP_ADDR=consul:8500
       - DISABLE_CONSUL_TEMPLATE=true
       - S6_LOGGING=0
-      - SERVICE_2181_NAME=zookeeper
-      - SERVICE_2181_CHECK_TCP=true
-      - SERVICE_2181_CHECK_INTERVAL=15s
-      - SERVICE_2888_NAME=zookeeper-2888
-      - SERVICE_2888_CHECK_TCP=true
-      - SERVICE_2888_CHECK_INTERVAL=15s
-      - SERVICE_3888_NAME=zookeeper-3888
-      - SERVICE_3888_CHECK_TCP=true
-      - SERVICE_3888_CHECK_INTERVAL=15s
-#    ports:
-#      - 2181
-#      - 2888
-#      - 3888
+    ports:
+      - 2181
+      - 2888
+      - 3888
