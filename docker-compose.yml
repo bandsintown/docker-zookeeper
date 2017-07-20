@@ -35,13 +35,13 @@ services:
     environment:
       - CONSUL_HTTP_ADDR=consul:8500
 
-  # Log Agent
+  # Zookeeper
   zookeeper:
     image: bandsintown/zookeeper:3.4.10
     depends_on:
       - consul
       - consulator
-    command: consul-template -consul-addr consul:8500 -config /etc/consul-template/conf
+    command: consul-template -config /etc/consul-template/conf
     environment:
       - CONSUL_HTTP_ADDR=consul:8500
       - DISABLE_CONSUL_TEMPLATE=true
