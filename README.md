@@ -1,9 +1,10 @@
-# Supported tags and respective `Dockerfile` links
+[![dockeri.co](http://dockeri.co/image/bandsintown/zookeeper)](https://hub.docker.com/r/bandsintown/zookeeper/)
 
-* `3.3.6`, `3.3` [(3.3.6/Dockerfile)](https://github.com/bandsintown/zookeeper-docker/blob/master/3.3.6/Dockerfile)
-* `3.4.10`, `3.4`, `latest` [(3.4.10/Dockerfile)](https://github.com/bandsintown/zookeeper-docker/blob/master/3.4.10/Dockerfile)
-
-[![](https://images.microbadger.com/badges/image/bandsintown/zookeeper.svg)](http://microbadger.com/images/bandsintown/zookeeper)
+[![Build status](https://badge.buildkite.com/f78e045c0b561ba33f80f3c996ccfe89b49ade24b832f92bfd.svg)](https://buildkite.com/bandsintown/docker-zookeeper)
+[![GitHub issues](https://img.shields.io/github/issues/bandsintown/docker-zookeeper.svg "GitHub issues")](https://github.com/bandsintown/docker-zookeeper)
+[![GitHub stars](https://img.shields.io/github/stars/bandsintown/docker-zookeeper.svg "GitHub stars")](https://github.com/bandsintown/docker-zookeeper)
+[![Docker layers](https://images.microbadger.com/badges/image/bandsintown/zookeeper.svg)](http://microbadger.com/images/bandsintown/zookeeper)
+	
 
 # What is Apache Zookeeper?
 
