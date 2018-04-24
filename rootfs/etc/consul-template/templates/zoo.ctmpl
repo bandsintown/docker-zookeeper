@@ -14,6 +14,7 @@ dataLogDir={{ env "ZOO_DATA_LOG_DIR" }}
 tickTime={{ keyOrDefault (printf "%s/tickTime" $base_path) (env "ZOO_TICK_TIME") }}
 initLimit={{ keyOrDefault (printf "%s/initLimit" $base_path) (env "ZOO_INIT_LIMIT") }}
 syncLimit={{ keyOrDefault (printf "%s/syncLimit" $base_path) (env "ZOO_SYNC_LIMIT") }}
+maxClientCnxns={{ keyOrDefault (printf "%s/maxClientCnxns" $base_path) (env "ZOO_MAX_CLIENT_CNXNS") }}
 
 # Advanced Configuration
 # see: http://zookeeper.apache.org/doc/current/zookeeperAdmin.html#sc_advancedConfiguration
