@@ -17,7 +17,8 @@ ENV SERVICE_NAME=zookeeper \
     ZOO_PORT=2181 \
     ZOO_TICK_TIME=2000 \
     ZOO_INIT_LIMIT=5 \
-    ZOO_SYNC_LIMIT=2
+    ZOO_SYNC_LIMIT=2 \
+    ZOO_MAX_CLIENT_CNXNS=60
 
 # Add a user and make dirs
 RUN set -x \
